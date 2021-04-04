@@ -4,6 +4,8 @@
 	$text="";
 	$replaceText="";
 	$replacedText="";
+	$spcRemov="";
+
 
 	$match="Not checked yet.";
 
@@ -12,9 +14,15 @@ if ($_SERVER["REQUEST_METHOD"]=="POST") {
 	$text=$_POST["text"];
 	$replaceText=$_POST["replaceText"];
 
-	$replacedText=preg_replace($pattern, $replaceText, $text);
+    $spcRemov=preg_replace("/\s/","",$text);
+    $numOnly = @preg_replace("/[^\d.,]/","",$text);
 
-	if(preg_match($pattern, $text)) {
+    @preg_match("/\[(.*?)\]+/",$text,$wordExtracted);
+
+	@$replacedText=preg_replace($pattern, $replaceText, $text);
+    $noNewline=@preg_replace("/\n/","",$text);
+
+	if(@preg_match($pattern, $text)) {
 						$match="Match!";
 					} else {
 						$match="Does not match!";
@@ -36,9 +44,11 @@ if ($_SERVER["REQUEST_METHOD"]=="POST") {
 			<dt>Pattern</dt>
 			<dd><input type="text" name="pattern" value="<?= $pattern ?>"></dd>
 
-			<dt>Text</dt>
-			<dd><input type="text" name="text" value="<?= $text ?>"></dd>
 
+
+			<dt>Text</dt>
+			<dd>
+                <textarea name="text" id="" cols="30" rows="10"> <?= $text ?> </textarea>
 			<dt>Replace Text</dt>
 			<dd><input type="text" name="replaceText" value="<?= $replaceText ?>"></dd>
 
@@ -48,6 +58,17 @@ if ($_SERVER["REQUEST_METHOD"]=="POST") {
 			<dt>Replaced Text</dt>
 			<dd> <code><?=	$replacedText ?></code></dd>
 
+            <dt>With white spaces removed: </dt>
+            <dd><?=$spcRemov?></dd>
+
+            <dt> Numerical representative </dt>
+            <dd><?=$numOnly?></dd>
+
+            <dt> Without new lines</dt>
+            <dd>  <?=$noNewline?></dd>
+
+            <dt> Word within parenthesis </dt>
+            <dd> <?=$wordExtracted[1]?></dd>
 			<dt>&nbsp;</dt>
 			<dd><input type="submit" value="Check"></dd>
 		</dl>
